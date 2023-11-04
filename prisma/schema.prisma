@@ -20,13 +20,23 @@ model User {
   journals Journal[]
 }
 
+model Element {
+  id          String   @id @default(uuid())
+  description String
+  hours       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  journalId   String
+  journal     Journal  @relation(fields: [journalId], references: [id])
+}
+
 model Journal {
-  id        String   @id @default(uuid())
-  title     String
-  content   String
+  id        String    @id @default(uuid())
+  elements  Element[]
+  allHours  Int
   image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  author    User     @relation(fields: [authorId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  author    User      @relation(fields: [authorId], references: [id])
   authorId  String
 }

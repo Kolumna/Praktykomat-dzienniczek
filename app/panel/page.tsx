@@ -4,10 +4,13 @@ import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import JournalCount from "./JournalsCount";
 
 const getData = async () => {
   const session = await getServerSession(authOptions);
-  const res = await fetch(`${process.env.DOMAIN_NAME}/api/students?id=${session?.user?.name}`);
+  const res = await fetch(
+    `${process.env.DOMAIN_NAME}/api/students?id=${session?.user?.name}`
+  );
 
   return res.json();
 };
@@ -24,9 +27,8 @@ export default async function Page() {
         <div className="card-body gap-8 flex justify-center items-center">
           {" "}
           <p>Ilość uzupełnionych dni</p>
-          <div className="stat-value text-success text-5xl h-full items-center flex">
-            0
-          </div>
+          {/*@ts-ignore */}
+          <JournalCount id={session.user?.name} />
           <Link href="/panel/dziennik" className="btn">
             <svg
               xmlns="http://www.w3.org/2000/svg"
