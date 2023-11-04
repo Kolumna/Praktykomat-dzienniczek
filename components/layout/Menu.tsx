@@ -27,7 +27,7 @@ export default function Menu() {
         className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
       >
         <li>
-          <Link href="/admin/ustawienia">
+          <Link href="/panel/ustawienia">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"

@@ -3,18 +3,34 @@ import { hash } from "bcrypt";
 import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === "GET") {
+    if (req.query.id) {
+      try {
+        const user = await prisma.user.findUnique({
+          where: {
+            id: req.query.id.toString(),
+          },
+        });
+        res.status(200).json(user);
+      } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Internal server error", error });
+      }
+    }
+  }
   if (req.method === "POST") {
     console.log(req.body);
-    
+
     try {
-      await prisma.user.createMany({
-        data: req.body.map((user: any) => ({
-          email: user.email,
-          password: user.password,
-          name: user.name,
-          surname: user.surname,
-          class: user.class,
-        })),
+      await prisma.user.create({
+        data: {
+          id: req.body.id,
+          email: req.body.email,
+          password: req.body.password,
+          name: req.body.name,
+          surname: req.body.surname,
+          class: req.body.class,
+        },
       });
     } catch (error) {
       console.log(error);
