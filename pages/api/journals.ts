@@ -1,7 +1,16 @@
 import prisma from "@/prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
+export const config = {
+  api: {
+    externalResolver: true,
+  },
+};
+
 export default async function (req: NextApiRequest, res: NextApiResponse) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "*");
+  res.setHeader("Access-Control-Allow-Methods", "*");
   if (req.method === "GET") {
     if (!req.query.id && !req.query.studentId) {
       try {

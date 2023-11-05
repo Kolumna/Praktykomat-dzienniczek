@@ -1,14 +1,16 @@
 "use client";
 
 import Card from "@/components/Card";
+import Loading from "@/components/Loading";
 import Panel from "@/components/Panel";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 
-export default function Dziennik() {
-  const { data } = useQuery({
+export default function Dziennik({ id }: { id: string }) {
+  const { data, isLoading } = useQuery({
     queryKey: ["dziennik"],
-    queryFn: () => fetch("/api/journals").then((res) => res.json()),
+    queryFn: () =>
+      fetch(`/api/journals?studentId=${id}`).then((res) => res.json()),
   });
 
   return (
@@ -20,14 +22,19 @@ export default function Dziennik() {
         </Link>
       }
     >
-      {data?.map((item: any, element: number) => (
+      {isLoading ? <Loading/> : data?.map((item: any, element: number) => (
         <Card className="flex" row>
           <div>
             <p className="text-xl font-bold">Dzień {element + 1}</p>
-            <p className="text-primary">{new Date(item.createdAt).toLocaleString()}</p>
+            <p className="text-primary">
+              {new Date(item.createdAt).toLocaleString()}
+            </p>
             <p className="text-md">Ilość godzin: {item.allHours}</p>
           </div>
-          <Link href={`/panel/dziennik/edycja/${item.id}`} className="btn btn-square btn-primary">
+          <Link
+            href={`/panel/dziennik/edycja/${item.id}`}
+            className="btn btn-square btn-primary"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
