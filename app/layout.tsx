@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/Header";
 import { QueryWrapper } from "@/components/auth/QueryWrapper";
+import Footer from "@/components/layout/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,12 +20,13 @@ export default function RootLayout({
   return (
     <html lang="pl" data-theme="light">
       <body className={inter.className}>
-          <QueryWrapper>
-            <Header />
-            <main className="min-h-[calc(100vh-300px)] bg-base-200">
-              {children}
-            </main>
-          </QueryWrapper>
+        <QueryWrapper>
+          <Header />
+          <main className="min-h-[calc(100vh-300px)] bg-base-200">
+            {children}
+          </main>
+          <Footer />
+        </QueryWrapper>
       </body>
     </html>
   );

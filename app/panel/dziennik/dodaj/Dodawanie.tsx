@@ -3,6 +3,9 @@
 import Panel from "@/components/Panel";
 import { useState } from "react";
 import CallendarButton from "../CalendarButton";
+import { postFetch, updateFetch } from "@/utils/fetch";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function Dodawanie({
   id,
@@ -12,6 +15,7 @@ export default function Dodawanie({
   id: string;
   change?: boolean;
   data?: {
+    id: string;
     elements: {
       description: string;
       hours: number;
@@ -27,6 +31,11 @@ export default function Dodawanie({
           hours: number;
         }[])
   );
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
+
+  console.log(data?.id);
 
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,44 +45,66 @@ export default function Dodawanie({
 
   const handleSubmit = async (e: React.FormEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    const response = await fetch(`/api/journals?id=${id}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        allHours: journal.reduce((a, b) => a + b.hours, 0),
-        authorId: id,
-        elements: journal,
-      }),
-    });
-    return response.json();
+    setLoading(true);
+
+    if (change) {
+      try {
+        await updateFetch(`/api/journals?id=${data?.id}`, {
+          allHours: journal.reduce((a, b) => a + b.hours, 0),
+          authorId: id,
+          elements: journal,
+        });
+        toast.success("Zaktualizowano dzień z dziennika!");
+        router.push("/panel/dziennik");
+      } catch (e) {
+        toast.error("Wystąpił błąd podczas dodawania dnia do dziennika!");
+      }
+    } else {
+      try {
+        await postFetch(`/api/journals?id=${id}`, {
+          allHours: journal.reduce((a, b) => a + b.hours, 0),
+          authorId: id,
+          elements: journal,
+        });
+        toast.success("Dodano dzień do dziennika!");
+        router.push("/panel/dziennik");
+      } catch (e) {
+        toast.error("Wystąpił błąd podczas dodawania dnia do dziennika!");
+      }
+    }
+    setLoading(false);
   };
 
   return (
     <>
       {true ? (
-        <Panel title={`Dodawanie dnia`} button={<CallendarButton />}>
+        <Panel
+          title={`${change ? "Edycja dnia" : "Dodawanie dnia"}`}
+          button={<CallendarButton />}
+        >
           {journal.length > 0 && (
             <ul className="col-span-full">
               {journal.map((item, index) => (
                 <li
-                  className="flex gap-4 bg-base-100 rounded-xl mb-4 p-4 relative"
+                  className="flex flex-col pl-14 md:flex-row gap-4 bg-base-100 rounded-xl mb-4 p-4 relative"
                   key={index}
                 >
                   <span className="bg-neutral absolute left-0 top-0 text-white p-4 font-bold rounded-l-lg h-full">
                     {index + 1}
                   </span>
-                  <div className="w-full ml-12">
-                    <textarea
-                      onChange={(e) => {
-                        const newJournal = [...journal];
-                        newJournal[index].description = e.target.value;
-                        setJournal(newJournal);
-                      }}
-                      value={item.description}
-                      className="textarea textarea-bordered w-full"
-                    />
+                  <div className="w-full">
+                    <div className="form-control w-full">
+                      <label className="label">Opis zajeć</label>
+                      <textarea
+                        onChange={(e) => {
+                          const newJournal = [...journal];
+                          newJournal[index].description = e.target.value;
+                          setJournal(newJournal);
+                        }}
+                        value={item.description}
+                        className="textarea textarea-bordered w-full"
+                      />
+                    </div>
                     <button
                       onClick={() => {
                         const newJournal = [...journal];
@@ -131,7 +162,7 @@ export default function Dodawanie({
             onSubmit={handleAdd}
             className="flex flex-col bg-white p-4 rounded-xl shadow justify-between gap-8 col-span-full"
           >
-            <div className="flex gap-4">
+            <div className="flex flex-col md:flex-row gap-4">
               <div className="form-control w-full">
                 <label className="label">Opis zajeć</label>
                 <textarea
@@ -185,20 +216,63 @@ export default function Dodawanie({
               </div>
             </div>
 
-            <div className="flex justify-center items-center w-[10%]">
-              <button className="btn btn-success w-full h-full">Dodaj</button>
+            <div className="flex justify-start items-center">
+              <button className="btn btn-success h-full">Dodaj</button>
             </div>
           </form>
-          <div className="col-span-full text-2xl font-bold">
+          <div className="text-xl text-center font-bold bg-base-100 rounded-lg shadow p-4">
             Łącznie:{" "}
             <span className="text-primary">
               {journal.reduce((a, b) => a + b.hours, 0)}
             </span>{" "}
             godzin
           </div>
-          <button onClick={(e) => handleSubmit(e)} className="btn btn-neutral">
-            Zapisz
+          <button
+            onClick={(e) => handleSubmit(e)}
+            className="btn btn-neutral btn-outline h-full xl:col-start-2"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99"
+              />
+            </svg>
+            Resetuj
           </button>
+          {loading ? (
+            <button disabled className="btn btn-neutral h-full xl:col-start-3">
+              Zapisywanie...
+            </button>
+          ) : (
+            <button
+              onClick={(e) => handleSubmit(e)}
+              className="btn btn-neutral h-full xl:col-start-3"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m6.75 12l-3-3m0 0l-3 3m3-3v6m-1.5-15H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                />
+              </svg>
+              Zapisz
+            </button>
+          )}
         </Panel>
       ) : (
         <span>Ładowanie...</span>
