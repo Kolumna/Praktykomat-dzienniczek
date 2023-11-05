@@ -14,11 +14,15 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     }
     if (req.query.id) {
       try {
-        const journals = await prisma.journal.findMany({
+        const journals = await prisma.journal.findUnique({
           where: {
-            authorId: req.query.id.toString(),
+            id: req.query.id.toString(),
+          },
+          include: {
+            elements: true,
           },
         });
+        
         res.status(200).json(journals);
       } catch (error) {
         console.log(error);
