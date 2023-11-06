@@ -16,6 +16,7 @@ export default function Dodawanie({
   change?: boolean;
   data?: {
     id: string;
+    date: string;
     elements: {
       description: string;
       hours: number;
@@ -31,11 +32,12 @@ export default function Dodawanie({
           hours: number;
         }[])
   );
+  const [date, setDate] = useState(
+    data ? data?.date.split("T")[0] : new Date().toISOString().split("T")[0]
+  );
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-
-  console.log(data?.id);
 
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -53,6 +55,7 @@ export default function Dodawanie({
           allHours: journal.reduce((a, b) => a + b.hours, 0),
           authorId: id,
           elements: journal,
+          date: date,
         });
         toast.success("Zaktualizowano dzień z dziennika!");
         router.push("/panel/dziennik");
@@ -65,6 +68,7 @@ export default function Dodawanie({
           allHours: journal.reduce((a, b) => a + b.hours, 0),
           authorId: id,
           elements: journal,
+          date: date,
         });
         toast.success("Dodano dzień do dziennika!");
         router.push("/panel/dziennik");
@@ -80,13 +84,39 @@ export default function Dodawanie({
       {true ? (
         <Panel
           title={`${change ? "Edycja dnia" : "Dodawanie dnia"}`}
-          button={<CallendarButton />}
+          button={
+            <div className="flex gap-4 items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6 -mr-2 stroke-primary"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"
+                />
+              </svg>
+
+              <span className="font-bold text-primary">Wybierz datę</span>
+              <input
+                className=" border-2 border-neutral bg-base-100 rounded-xl p-2 my-4"
+                type="date"
+                // @ts-ignore
+                onChange={(e) => setDate(e.target.value)}
+                value={date}
+              />
+            </div>
+          }
         >
           {journal.length > 0 && (
             <ul className="col-span-full">
               {journal.map((item, index) => (
                 <li
-                  className="flex flex-col pl-14 md:flex-row gap-4 bg-base-100 rounded-xl mb-4 p-4 relative"
+                  className="flex flex-col shadow pl-14 md:flex-row gap-4 bg-base-100 rounded-xl mb-4 p-4 relative"
                   key={index}
                 >
                   <span className="bg-neutral absolute left-0 top-0 text-white p-4 font-bold rounded-l-lg h-full">
@@ -160,7 +190,7 @@ export default function Dodawanie({
           )}
           <form
             onSubmit={handleAdd}
-            className="flex flex-col bg-white p-4 rounded-xl shadow justify-between gap-8 col-span-full"
+            className="flex flex-col bg-base-100 p-4 rounded-xl shadow justify-between gap-8 col-span-full"
           >
             <div className="flex flex-col md:flex-row gap-4">
               <div className="form-control w-full">
@@ -228,7 +258,11 @@ export default function Dodawanie({
             godzin
           </div>
           <button
-            onClick={(e) => handleSubmit(e)}
+            onClick={() => {
+              setJournal([]);
+              setRawJournal({ description: "", hours: 0 });
+            }}
+            type="button"
             className="btn btn-neutral btn-outline h-full xl:col-start-2"
           >
             <svg

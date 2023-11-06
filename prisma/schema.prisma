@@ -32,6 +32,7 @@ model Element {
 
 model Journal {
   id        String    @id @default(uuid())
+  date      DateTime  
   elements  Element[]
   allHours  Int
   image     String?

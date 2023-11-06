@@ -4,13 +4,14 @@ import { useState } from "react";
 import Calendar from "react-calendar";
 import 'react-calendar/dist/Calendar.css';
 
-export default function CallendarButton() {
+export default function CallendarButton({date}: {date: Date}) {
   const [open, setOpen] = useState(false);
   return (
     <>
       <dialog id="my_modal_1" className="modal">
         <div className="modal-box">
-          <h3 className="font-bold text-lg">Hello!</h3>
+          <h3 className="font-bold text-lg">Podaj datę</h3>
+          <input className=" border-2 rounded-xl p-2 my-4" type="date"/>
           <p className="py-4">
             Press ESC key or click the button below to close
           </p>

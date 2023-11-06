@@ -19,8 +19,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     }
   }
   if (req.method === "POST") {
-    console.log(req.body);
-
     try {
       await prisma.user.create({
         data: {

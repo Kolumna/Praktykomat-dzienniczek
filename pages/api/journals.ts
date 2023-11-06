@@ -58,13 +58,12 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   }
 
   if (req.method === "POST") {
-    console.log(req.body);
-
     try {
       const journal = await prisma.journal.create({
         data: {
           allHours: req.body.allHours,
           authorId: req.body.authorId,
+          date: new Date(req.body.date).toISOString(),
         },
       });
 
@@ -83,8 +82,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
   }
 
   if (req.method === "PUT") {
-    console.log(req.body.id);
-
     try {
       const journal = await prisma.journal.update({
         where: {
@@ -92,6 +89,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         },
         data: {
           allHours: req.body.allHours,
+          date: new Date(req.body.date).toISOString(),
         },
       });
 
