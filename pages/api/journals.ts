@@ -18,7 +18,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         res.status(200).json(journals);
       } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Internal server error", error });
+        res.status(500).json({ status: "error", error });
       }
     }
     if (req.query.studentId) {
@@ -35,7 +35,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         res.status(200).json(journals);
       } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Internal server error", error });
+        res.status(500).json({ status: "error", error });
       }
     }
     if (req.query.id) {
@@ -52,7 +52,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
         res.status(200).json(journals);
       } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Internal server error", error });
+        res.status(500).json({ status: "error", error });
       }
     }
   }
@@ -76,9 +76,9 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       });
     } catch (error) {
       console.log(error);
-      res.status(500).json({ message: "Internal server error", error });
+      res.status(500).json({ status: "error", error });
     }
-    res.status(200).json({ message: "Success" });
+    res.status(200).json({ message: "success" });
   }
 
   if (req.method === "PUT") {
@@ -110,6 +110,6 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       console.log(error);
       res.status(400).json({ message: "error", error });
     }
-    res.status(200).json({ message: "Success" });
+    res.status(200).json({ message: "success" });
   }
 }

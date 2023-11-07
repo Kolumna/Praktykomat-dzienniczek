@@ -26,7 +26,7 @@ export default function Menu() {
         tabIndex={0}
         className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
       >
-        <li>
+        {/* <li>
           <Link href="/panel/ustawienia">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -49,7 +49,7 @@ export default function Menu() {
             </svg>
             Ustawienia
           </Link>
-        </li>
+        </li> */}
         <li>
           <button
             onClick={(e) => {

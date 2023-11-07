@@ -51,12 +51,13 @@ export default function Dodawanie({
 
     if (change) {
       try {
-        await updateFetch(`/api/journals?id=${data?.id}`, {
+        const res = await updateFetch(`/api/journals?id=${data?.id}`, {
           allHours: journal.reduce((a, b) => a + b.hours, 0),
           authorId: id,
           elements: journal,
           date: date,
         });
+        if (res.status === "error") throw new Error(res.message);
         toast.success("Zaktualizowano dzień z dziennika!");
         router.push("/panel/dziennik");
       } catch (e) {
@@ -64,12 +65,13 @@ export default function Dodawanie({
       }
     } else {
       try {
-        await postFetch(`/api/journals?id=${id}`, {
+        const res = await postFetch(`/api/journals?id=${id}`, {
           allHours: journal.reduce((a, b) => a + b.hours, 0),
           authorId: id,
           elements: journal,
           date: date,
         });
+        if (res.status === "error") throw new Error(res.message);
         toast.success("Dodano dzień do dziennika!");
         router.push("/panel/dziennik");
       } catch (e) {

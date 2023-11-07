@@ -46,7 +46,7 @@ export default function Footer() {
         </svg>
 
         <p className="mt-2">
-          &#169;{new Date().getFullYear()}{" "}
+          Wykonał{" "}
           <a
             className="font-bold hover:underline text-primary"
             target="_blank"
